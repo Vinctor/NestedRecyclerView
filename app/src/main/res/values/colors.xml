@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <dimen name="height_viewpager">300dp</dimen>
+    <string name="loading_view_click_loading_more">点击加载更多</string>
+    <string name="loading_view_no_more">没有更多了</string>
+    <string name="loading_view_loading">加载中…</string>
+    <string name="loading_view_net_error">网路异常，点击重试</string>
+    <declare-styleable name="LoadingViewFinal">
+        <attr name="loadMoreMode">
+            <flag name="click" value="0x0" />
+            <flag name="scroll" value="0x1" />
+        </attr>
+        <attr name="loadMoreView" format="string"/>
+        <attr name="noLoadMoreHideView" format="boolean"/>
+    </declare-styleable>
+</resources>
