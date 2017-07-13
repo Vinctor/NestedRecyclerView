@@ -30,6 +30,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        swip.setColorSchemeColors(0xff00ff00);
         recyclerViewFinal.setLayoutManager(new LinearLayoutManager(thisActivity));
         Header header = new Header(thisActivity, recyclerViewFinal);
         recyclerViewFinal.addHeaderView(header.getView());
@@ -42,12 +43,14 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onBindViewHolder(Holder holder, int position) {
-                holder.textView.setText("外部item" + position);
+                holder.textView.setTextColor(0xffff2222);
+                holder.textView.setPadding(0, 30, 0, 30);
+                holder.textView.setText("外部RV" + position);
             }
 
             @Override
             public int getItemCount() {
-                return 100;
+                return 20;
             }
         };
         recyclerViewFinal.setAdapter(adapter);

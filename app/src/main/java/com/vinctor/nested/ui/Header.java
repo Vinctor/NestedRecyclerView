@@ -53,13 +53,14 @@ public class Header {
 
             @Override
             public void onBindViewHolder(MainActivity.Holder holder, int position) {
-                holder.textView.setTextColor(0xffff2222);
-                holder.textView.setText("内部item" + position);
+                holder.textView.setTextColor(0xff2222ff);
+                holder.textView.setPadding(0, 30, 0, 30);
+                holder.textView.setText("内部RV" + position);
             }
 
             @Override
             public int getItemCount() {
-                return 100;
+                return 15;
             }
         });
 

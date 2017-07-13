@@ -2,10 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#eeeeef"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp">
 
-    <com.vinctor.nested.view.CustomRecyclerFinal
-        android:id="@+id/recyclerview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_viewpager" />
+        android:layout_height="@dimen/height_viewpager"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="文字文字"
+            android:textSize="30dp" />
+
+
+        <TextView
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="文字文字"
+            android:textSize="30dp" />
+
+        <com.vinctor.nested.view.CustomRecyclerFinal
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottom"
+            android:layout_below="@id/top"
+            android:background="#fe9987" />
+    </RelativeLayout>
 </LinearLayout>
