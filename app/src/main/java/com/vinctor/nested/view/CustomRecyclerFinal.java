@@ -1,6 +1,7 @@
 package com.vinctor.nested.view;
 
 import android.content.Context;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewParent;
@@ -26,6 +27,12 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
 
     float lastX;
     float lastY;
+    boolean isFirst = true;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -37,14 +44,19 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
                 requestDisallowIntercept(true);
                 lastX = x;
                 lastY = y;
+                isFirst = true;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (Math.abs(lastY - y) > Math.abs(lastX - x)) {
-                    requestDisallowIntercept(true);
-                } else {
-                    requestDisallowIntercept(false);
-                    return false;
+                if (isFirst) {
+                    if (Math.abs(lastY - y) * 2 > Math.abs(lastX - x)) {//垂直滑动,viewpager不拦截
+                        requestDisallowIntercept(true);
+                    } else {//水平滑动,recyclerview不处理 viewpager处理
+                        requestDisallowIntercept(false);
+                        return false;
+                    }
+                    isFirst = false;
                 }
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -54,19 +66,47 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
         return super.onTouchEvent(e);
     }
 
-    ViewParent nestedRecyclerView;
+    private void requestDisallowIntercept(boolean b) {
+        ViewParent view = getParent();
+        while (view != null) {
+            view.requestDisallowInterceptTouchEvent(b);
+            view = view.getParent();
+        }
+    }
 
-    void requestDisallowIntercept(boolean intercept) {
-        if (nestedRecyclerView != null) {
-            nestedRecyclerView.requestDisallowInterceptTouchEvent(intercept);
+    ViewParent recyclerview;
+
+    void requestRecyclerViewDisallowIntercept(boolean intercept) {
+        if (recyclerview != null) {
+            recyclerview.requestDisallowInterceptTouchEvent(intercept);
             return;
         }
-        nestedRecyclerView = getParent();
-        while (nestedRecyclerView != null) {
-            if (nestedRecyclerView instanceof NestedRecyclerViewFinal) {
-                nestedRecyclerView.requestDisallowInterceptTouchEvent(intercept);
+        ViewParent view = getParent();
+        while (view != null) {
+            if (view instanceof NestedRecyclerViewFinal) {
+                view.requestDisallowInterceptTouchEvent(intercept);
+                recyclerview = view;
+                break;
             }
-            nestedRecyclerView = nestedRecyclerView.getParent();
+            view = view.getParent();
+        }
+    }
+
+    ViewParent viewPager;
+
+    void requestViewPagerDisallowIntercept(boolean intercept) {
+        if (viewPager != null) {
+            viewPager.requestDisallowInterceptTouchEvent(intercept);
+            return;
+        }
+        ViewParent view = getParent();
+        while (view != null) {
+            if (view instanceof ViewPager) {
+                view.requestDisallowInterceptTouchEvent(intercept);
+                viewPager = view;
+                break;
+            }
+            view = view.getParent();
         }
     }
 }

@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ScrollerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -21,7 +20,6 @@ import cn.vinctor.loadingviewfinal.RecyclerViewFinal;
 
 public class NestedRecyclerViewFinal extends RecyclerViewFinal implements NestedScrollingParent {
     NestedScrollingParentHelper mParentHelper;
-    private ScrollerCompat mScroller;
     private RecyclerView recyclerViewChild;
 
     public NestedRecyclerViewFinal(Context context) {
@@ -41,7 +39,6 @@ public class NestedRecyclerViewFinal extends RecyclerViewFinal implements Nested
 
     private void init(Context context) {
         mParentHelper = new NestedScrollingParentHelper(this);
-        mScroller = ScrollerCompat.create(getContext(), null);
     }
 
     @Override
@@ -76,7 +73,35 @@ public class NestedRecyclerViewFinal extends RecyclerViewFinal implements Nested
 
 
     @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return super.onTouchEvent(e);
+    }
+
+    float lastX;
+    float lastY;
+    boolean isFirst = true;
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
+        int action = e.getAction();
+        float x = e.getRawX();
+        float y = e.getRawY();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = x;
+                lastY = y;
+                isFirst = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (isFirst) {
+                    if (Math.abs(lastY - y) * 2 < Math.abs(lastX - x)) {
+                        requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }else  requestDisallowInterceptTouchEvent(false);
+                    isFirst = false;
+                }
+                break;
+        }
         return super.onInterceptTouchEvent(e);
     }
 
