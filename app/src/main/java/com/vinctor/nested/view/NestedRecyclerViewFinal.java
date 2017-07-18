@@ -1,16 +1,13 @@
 package com.vinctor.nested.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewParent;
 
 import cn.vinctor.loadingviewfinal.RecyclerViewFinal;
 
@@ -41,45 +38,41 @@ public class NestedRecyclerViewFinal extends RecyclerViewFinal implements Nested
         mParentHelper = new NestedScrollingParentHelper(this);
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        ViewParent parent = getParent();
-        SwipeRefreshLayout swip;
-        if (parent instanceof SwipeRefreshLayout) {
-            swip = (SwipeRefreshLayout) parent;
-            swip.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
-                //返回false 拦截  返回true 不拦截
-                @Override
-                public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
-                    if (ViewCompat.canScrollVertically(NestedRecyclerViewFinal.this, -1)) {//子view可以向下滑动
-                        return true;
-                    } else {//不可以向下滑动,再判断内部recyclerview
-                        if (recyclerViewChild != null) {
-                            if (recyclerViewChild.canScrollVertically(-1)) {//recyclerview可以向下滑动,不拦截
-                                return true;
-                            } else return false;
-                        }
-                        return false;
-                    }
-                }
-            });
-        }
-    }
+//    @Override
+//    protected void onAttachedToWindow() {
+//        super.onAttachedToWindow();
+//        ViewParent parent = getParent();
+//        SwipeRefreshLayout swip;
+//        if (parent instanceof SwipeRefreshLayout) {
+//            swip = (SwipeRefreshLayout) parent;
+//            swip.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+//                //返回false 拦截  返回true 不拦截
+//                @Override
+//                public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
+//                    if (ViewCompat.canScrollVertically(NestedRecyclerViewFinal.this, -1)) {//子view可以向下滑动
+//                        return true;
+//                    } else {//不可以向下滑动,再判断内部recyclerview
+//                        if (recyclerViewChild != null) {
+//                            if (recyclerViewChild.canScrollVertically(-1)) {//recyclerview可以向下滑动,不拦截
+//                                return true;
+//                            } else return false;
+//                        }
+//                        return false;
+//                    }
+//                }
+//            });
+//        }
+//    }
+//
+//    public void changeToOtherPage() {
+//        recyclerViewChild = null;
+//    }
 
-    public void changeToOtherPage() {
-        recyclerViewChild = null;
-    }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        return super.onTouchEvent(e);
-    }
 
     float lastX;
     float lastY;
     boolean isFirst = true;
+    boolean isH = false;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
@@ -88,18 +81,26 @@ public class NestedRecyclerViewFinal extends RecyclerViewFinal implements Nested
         float y = e.getRawY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                requestDisallowInterceptTouchEvent(false);
                 lastX = x;
                 lastY = y;
                 isFirst = true;
+                isH = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (isFirst) {
-                    if (Math.abs(lastY - y) * 2 < Math.abs(lastX - x)) {
-                        requestDisallowInterceptTouchEvent(true);
-                        return false;
-                    }else  requestDisallowInterceptTouchEvent(false);
-                    isFirst = false;
+                if (isH) {
+                    return false;
                 }
+                if (isFirst) {
+                    isFirst = true;
+                    if (Math.abs(lastY - y) * 2 < Math.abs(lastX - x)) {
+                        isH = true;
+                        return false;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                isH = false;
                 break;
         }
         return super.onInterceptTouchEvent(e);

@@ -2,27 +2,36 @@ package com.vinctor.nested.view;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.view.ViewParent;
-
-import cn.vinctor.loadingviewfinal.RecyclerViewFinal;
 
 /**
  * Created by Vinctor on 2017/7/12.
  */
 
-public class CustomRecyclerFinal extends RecyclerViewFinal {
+public class CustomRecyclerFinal extends RecyclerView {
+    int mTouchSlop;
+
     public CustomRecyclerFinal(Context context) {
         super(context);
+        init(context);
     }
 
     public CustomRecyclerFinal(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public CustomRecyclerFinal(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context) {
+        mTouchSlop = ViewConfiguration.getTouchSlop();
     }
 
     float lastX;
@@ -30,8 +39,18 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
     boolean isFirst = true;
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        return super.dispatchTouchEvent(ev);
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+        int action = e.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                requestDisallowIntercept(true);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                requestDisallowIntercept(false);
+                break;
+        }
+        return super.onInterceptTouchEvent(e);
     }
 
     @Override
@@ -45,16 +64,17 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
                 lastX = x;
                 lastY = y;
                 isFirst = true;
-                break;
+                return true;
             case MotionEvent.ACTION_MOVE:
                 if (isFirst) {
+                    isFirst = false;
                     if (Math.abs(lastY - y) * 2 > Math.abs(lastX - x)) {//垂直滑动,viewpager不拦截
                         requestDisallowIntercept(true);
+                        return true;
                     } else {//水平滑动,recyclerview不处理 viewpager处理
                         requestDisallowIntercept(false);
                         return false;
                     }
-                    isFirst = false;
                 }
 
                 break;
@@ -67,11 +87,7 @@ public class CustomRecyclerFinal extends RecyclerViewFinal {
     }
 
     private void requestDisallowIntercept(boolean b) {
-        ViewParent view = getParent();
-        while (view != null) {
-            view.requestDisallowInterceptTouchEvent(b);
-            view = view.getParent();
-        }
+        requestRecyclerViewDisallowIntercept(b);
     }
 
     ViewParent recyclerview;

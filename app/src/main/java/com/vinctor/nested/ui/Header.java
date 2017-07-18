@@ -17,8 +17,6 @@ import com.vinctor.nested.view.NestedRecyclerViewFinal;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.vinctor.loadingviewfinal.RecyclerViewFinal;
-
 /**
  * Created by Vinctor on 2017/7/10.
  */
@@ -42,9 +40,8 @@ public class Header {
     private void init() {
         //recyclerview
         View first = inflater.inflate(R.layout.first, null);
-        RecyclerViewFinal recyclerView = (RecyclerViewFinal) first.findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = (RecyclerView) first.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setHasLoadMore(false);
         recyclerView.setAdapter(new RecyclerView.Adapter<MainActivity.Holder>() {
             @Override
             public MainActivity.Holder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -79,24 +76,6 @@ public class Header {
         final List<View> viewList = new ArrayList<>();
         viewList.add(first);
         viewList.add(second);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (position != 0) {
-                    recyclerViewFinal.changeToOtherPage();
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         viewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
